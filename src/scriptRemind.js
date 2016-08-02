@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import 'react-date-picker/index.css';
 import { DateField, Calendar } from 'react-date-picker'
 import $ from 'jquery';
-import DropdownList from 'react-widgets/lib/DropdownList';
+import Dropdown from 'react-drop-down';
 
 class ScriptRemind extends Component {
 
@@ -18,56 +18,68 @@ class ScriptRemind extends Component {
   }
   this.updateDrugName = this.updateDrugName.bind(this);
   this.submitForm = this.submitForm.bind(this);
-
+  this.handleDayClick = this.handleDayClick.bind(this);
+  this.handleDoseMeasurement = this.handleDoseMeasurement.bind(this);
+  this.handleScheduleDayWeek = this.handleScheduleDayWeek.bind(this);
 
 }
 
-updateDrugName(event){
-  console.log("value", event.target.value)
-  console.log("hi");
-  this.setState({
-      currentDrug: event.target.value
-    });
-}
+    updateDrugName(event){
+      console.log("value", event.target.value)
+      console.log("hi");
+      this.setState({
+          currentDrug: event.target.value
+        });
+    }
 
-handleDayClick(date) {
-  console.log("Selected Date:", date);
-}
+    handleDayClick(date) {
+      this.setState({
+        "date": date
+      })
 
-submitForm () {
-  var script = {
-    "name": this.state.currentDrug,
-    "dosage": this.state.dosageAmt + ' ' + this.state.dosageMeasure,
-    "refill": this.state.date,
-    "frequency": this.state.scheduleNum + ' per ' + this.state.scheduleDayWeek
-  }
-  console.log("submitForm called for: ", script)
+    }
+    handleScheduleDayWeek(dayWeek){
+        this.setState({
+          "scheduleDayWeek": dayWeek
+        })
+    }
+    handleDoseMeasurement(measure) {
+      console.log("measure", measure)
+      this.setState({
+        "dosageMeasure": measure
+      })
 
-  $.ajax({
-      type: 'POST',
-      url: '/scriptRemind',
-      dataType: 'json',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      data: JSON.stringify(script),
-      success: function(data){
-        console.log('A reminder was set for: ', data);
-      },
-      error: function(err){
-        console.log('Reminder not set: ', err);
+    }
+
+    submitForm () {
+      var script = {
+        "name": this.state.currentDrug,
+        "dosage": this.state.dosageAmt + ' ' + this.state.dosageMeasure,
+        "refill": this.state.date,
+        "frequency": this.state.scheduleNum + ' per ' + this.state.scheduleDayWeek,
+        "phoneNum": "8108414628"
       }
-    });
+      console.log("submitForm called for: ", script)
 
-}
+      $.ajax({
+          type: 'POST',
+          url: '/api/script/add',
+          dataType: 'json',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data: JSON.stringify(script),
+          success: function(data){
+            console.log('A reminder was set for: ', data);
+          },
+          error: function(err){
+            console.log('Reminder not set: ', err);
+          }
+        });
 
-onChange (dateString, { dateMoment, timestamp }) {
-  console.log(dateString)
-}
+    }
 
   render() {
-    var measurements = ['mg', 'mL', 'tablet'];
-    var schedule = ['day', 'week']
     let date = new Date();
     return (
       <div>
@@ -80,37 +92,33 @@ onChange (dateString, { dateMoment, timestamp }) {
         </div>
         <div>
           <input
+          width='200'
           onChange={(text) => this.setState({"dosageAmt": text})}
           placeholder='Dosage (e.g. if "Take 1 tablet", type "1")'
           />
-          <DropdownList
-            data={measurements}
-            defaultValue={'mg'}
-            onChange={(measure) => this.setState({dosageMeasure: measure})}>
-          </DropdownList>
-
-
-        </div>
+          <Dropdown value={this.state.dosageMeasure}
+                  onChange={this.handleDoseMeasurement}
+                  options={[ 'mg', 'mL', 'tablet']} />
+      </div>
         <div>
-          {/* <h1> Refill Date</h1> */}
-          <Calendar
-            dateFormat="YYYY-MM-DD"
-            date={date}
-            onChange={this.onChange}
-          />
-
+            <h1> Refill Date</h1>
+              <Calendar
+                dateFormat="YYYY-MM-DD"
+                date={date}
+                onChange={this.handleDayClick}
+              />
+            <h3> You selected {this.state.date} </h3>
         </div>
         <div>
           <input
+          width='100'
           onChange={(text) => this.setState({"scheduleNum": text})}
           placeholder='How often? (1x, 2x, etc..)'
           />
-          <h1> per </h1>
-           <DropdownList
-            data={schedule}
-            defaultValue={'day'}
-            onChange={(frequency) => this.setState({scheduleDayWeek: frequency})}>
-          </DropdownList>
+          <h3> per </h3>
+          <Dropdown value={this.state.scheduleDayWeek}
+                  onChange={this.handleScheduleDayWeek}
+                  options={[ 'day', 'week']} />
         </div>
         <div>
           <button onClick={this.submitForm()}> Remind Me </button>

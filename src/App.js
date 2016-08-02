@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
-import ScriptRemind from './scriptRemind.js';
+import ScriptRemind from './ScriptRemind.js';
 import './App.css';
 
 class App extends Component {
