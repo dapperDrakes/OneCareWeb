@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
 import ScriptRemind from './scriptRemind.js';
+import SymptomEntry from './symptomEntry.js';
 import './App.css';
 
 class App extends Component {
@@ -13,7 +14,10 @@ class App extends Component {
          </ul>
        {/* <label for="nav-trigger"></label> */}
         <div>
-          <ScriptRemind/>
+          <ScriptRemind />
+        </div>
+        <div>
+          <SymptomEntry />
         </div>
       </div>
      )
