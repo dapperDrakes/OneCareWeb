@@ -13,14 +13,14 @@
     "express-session": "^1.7.2",
     "jquery": "^2.2.1",
     "jwt-simple": "^0.2.0",
+    "moment": "^2.14.1",
     "mongo": "^0.1.0",
     "mongodb": "^2.2.1",
     "mongoose": "^4.5.3",
     "react": "^15.2.1",
     "react-date-picker": "^5.3.26",
-    "react-day-picker": "^2.4.1",
     "react-dom": "^15.2.1",
-    "react-widgets": "^3.4.3"
+    "react-drop-down": "^1.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
